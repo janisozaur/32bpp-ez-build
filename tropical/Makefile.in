@@ -1,0 +1,23 @@
+@SET_MAKE@
+NMLC = @NMLC@
+PNGCODEC = @PNGCODEC@
+top_srcdir = @top_srcdir@
+srcdir = @srcdir@
+
+all:	32bpp_ez_tropical.grf
+
+nml:	32bpp_ez_tropical.nml
+
+32bpp_ez_tropical.grf:	32bpp_ez_tropical.nml
+	$(NMLC) --lang-dir=$(srcdir)/lang --grf=$@ $^
+	rm -f $@.cache $@.cacheindex
+
+32bpp_ez_tropical.nml:
+	PNGCODEC=$(PNGCODEC) ../build_nml $(srcdir)/sprites $@ 32ZT TROPICAL $(PREFIX)
+
+clean:
+	rm -f 32bpp_ez_tropical.nml 32bpp_ez_tropical.grf
+
+distclean: clean
+	rm -f Makefile
+

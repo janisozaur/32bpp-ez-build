@@ -1,0 +1,8 @@
+grf {
+	grfid: "32ZC";
+	name: string(GRF_NAME);
+	desc: string(GRF_DESC);
+	version: 1;
+	min_compatible_version: 0;
+}
+

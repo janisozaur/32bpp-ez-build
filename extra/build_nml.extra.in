@@ -1,0 +1,85 @@
+#!@BASH@
+
+SRC_DIR="$1"
+DEST_NLM="$2"
+GRFID="$3"
+DIR_PREFIX="$4"
+
+GREP="@GREP@"
+SED="@SED@"
+
+function process_dir {
+
+    SPRITE_DIR="$1"
+    EXTRA_TYPE="$2"
+    OFFSET="$3"
+    PREFIX="$4"
+
+    echo -n '
+replacenew spr_EXTRA_'"$PREFIX""$EXTRA_TYPE"'_'"$OFFSET"'('"$EXTRA_TYPE"', "'"$DIR_PREFIX""$SRC_DIR"'/../../empty.pcx", '"$OFFSET"') {
+'
+    
+    for l in $SPRITE_DIR/*_z0.png; do
+	echo -n '        [0, 0, 1, 1, 0, 0]
+'
+    done
+    echo -n '}
+alternative_sprites(spr_EXTRA_'"$PREFIX""$EXTRA_TYPE"'_'"$OFFSET"', ZOOM_LEVEL_IN_4X, BIT_DEPTH_32BPP) {
+'
+
+    for l in $SPRITE_DIR/*_z0.png; do
+	x_offs=`$PNGCODEC l $l | tr ' ' '\n'|$GREP x_offs|$SED -E 's/._offs=\+?//;s/^$/0/'`
+        y_offs=`$PNGCODEC l $l | tr ' ' '\n'|$GREP y_offs|$SED -E 's/._offs=\+?//;s/^$/0/'`
+	echo -n '        ['"$x_offs"', '"$y_offs"', "'"$DIR_PREFIX$l"'", ['
+	if [ -f $SPRITE_DIR/`basename $l _z0.png`_z0m.png ]; then
+	    echo -n '"'"$DIR_PREFIX$SPRITE_DIR/`basename $l _z0.png`_z0m.png"'"'
+	fi
+	echo -n ']]
+'
+    done
+
+    echo -n '}
+
+'
+}
+
+(
+if [ "z$DIR_PREFIX" = "z" ]; then
+echo -n 'grf {
+	grfid: "'"$GRFID"'";
+	name: string(GRF_NAME);
+	desc: string(GRF_DESC);
+	version: 1;
+	min_compatible_version: 0;
+}
+
+'
+fi
+
+echo 'if (climate == CLIMATE_TROPICAL) {'
+process_dir $SRC_DIR/Landscape/Tropical/Foundations FOUNDATIONS_SLOPES_HALFTILES 0 TROPICAL_
+process_dir $SRC_DIR/Landscape/Tropical/Water/Coast COAST_TILES 0 TROPICAL_
+echo '} else if (climate == CLIMATE_ARCTIC) {'
+process_dir $SRC_DIR/Landscape/Arctic/Water/Coast COAST_TILES 0 ARCTIC_
+echo '} else {'
+process_dir $SRC_DIR/Landscape/Temperate/Foundations FOUNDATIONS_SLOPES_HALFTILES 0
+process_dir $SRC_DIR/Landscape/Temperate/Water/Coast COAST_TILES 0
+echo '}'
+
+process_dir $SRC_DIR/Infrastructure/Road ONE_WAY_ROAD 0
+process_dir $SRC_DIR/Infrastructure/Roadstops ROAD_STOPS 0
+
+process_dir $SRC_DIR/Infrastructure/Tram/Set1 TRAMWAY 4
+process_dir $SRC_DIR/Infrastructure/Tram/Set2 TRAMWAY 78
+process_dir $SRC_DIR/Infrastructure/Tram/Set3 TRAMWAY 107
+
+process_dir $SRC_DIR/Infrastructure/Airport/Runway AIRPORTS 0
+process_dir $SRC_DIR/Infrastructure/Airport/Helipad AIRPORTS 12
+
+process_dir $SRC_DIR/AllClimates/Railways/Catenary CATENARY 0
+process_dir $SRC_DIR/AllClimates/Railways/Signals PRE_SIGNAL_SEMAPHORE_PBS 0
+
+
+
+) > $DEST_NLM
+

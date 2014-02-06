@@ -1,0 +1,23 @@
+@SET_MAKE@
+NMLC = @NMLC@
+PNGCODEC = @PNGCODEC@
+top_srcdir = @top_srcdir@
+srcdir = @srcdir@
+
+all:	32bpp_ez_arctic.grf
+
+nml:	32bpp_ez_arctic.nml
+
+32bpp_ez_arctic.grf:	32bpp_ez_arctic.nml
+	$(NMLC) --lang-dir=$(srcdir)/lang --grf=$@ $^
+	rm -f $@.cache $@.cacheindex
+
+32bpp_ez_arctic.nml:
+	PNGCODEC=$(PNGCODEC) ../build_nml $(srcdir)/sprites $@ 32ZA ARCTIC $(PREFIX)
+
+clean:
+	rm -f 32bpp_ez_arctic.nml 32bpp_ez_arctic.grf
+
+distclean: clean
+	rm -f Makefile
+

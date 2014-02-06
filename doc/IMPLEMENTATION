@@ -1,0 +1,66 @@
+(root)
+ |
+ \-->base               builds the 'base' sprites (i.e. 32bpp replacements 
+ |    |                 for ogfx1_base in OpenGFX or equivalent in another baseset)
+ |    |
+ |    \-->sprites       contains the 32bpp sprites named <sprite_id>.png (ZOOM_LEVEL_NORMAL),
+ |                      <sprite_id>_z1.png (ZOOM_LEVEL_IN_X2) or <sprite_id>_z0.png
+ |                      (ZOOM_LEVEL_IN_X4), and corresponding mask files (named
+ |                      <sprite_id>m.png, <sprite_id>_z1m.png or <sprite_id>_z0m.png
+ |
+ \-->arctic             builds the 'arctic' override sprites (i.e. 32bpp replacements
+ |    |                 for ogfxc_arctic in OpenGFX or equivalent in another baseset)
+ |    |
+ |    \-->sprites       contains the 32bpp sprites named <sprite_id>.png (ZOOM_LEVEL_NORMAL),
+ |                      <sprite_id>_z1.png (ZOOM_LEVEL_IN_X2) or <sprite_id>_z0.png 
+ |                      (ZOOM_LEVEL_IN_X4), and corresponding mask files (named
+ |                      <sprite_id>m.png, <sprite_id>_z1m.png or <sprite_id>_z0m.png.
+ |
+ |                      WARNING!!! The sprite ids used are the ACTUALLY OVERRIDEN sprite
+ |                      id, and not the remapped baseset sprite ids which are typically
+ |                      used by basesets (such as OpenGFX or zBase).
+ | 
+ |                      As a corallary, you can actually override ANY srpite id from 
+ |                      base in the arctic climate, even if traditionally (i.e. in 
+ |                      original_windows or OpenGFX) it wasn't actually overriden.
+ |
+ \-->tropical           builds the 'tropical' override sprites (i.e. 32bpp replacements
+ |    |                 for ogfxh_tropical in OpenGFX or equivalent in another baseset)
+ |    |
+ |    \-->sprites       contains the 32bpp sprites named <sprite_id>.png (ZOOM_LEVEL_NORMAL),
+ |                      <sprite_id>_z1.png (ZOOM_LEVEL_IN_X2) or <sprite_id>_z0.png      
+ |                      (ZOOM_LEVEL_IN_X4), and corresponding mask files (named
+ |                      <sprite_id>m.png, <sprite_id>_z1m.png or <sprite_id>_z0m.png.
+ |
+ |                      WARNING!!! The sprite ids used are the ACTUALLY OVERRIDEN sprite 
+ |                      id, and not the remapped baseset sprite ids which are typically 
+ |                      used by basesets (such as OpenGFX or zBase)
+ |
+ |                      As a corallary, you can actually override ANY srpite id from
+ |                      base in the tropical climate, even if traditionally (i.e. in
+ |                      original_windows or OpenGFX) it wasn't actually overriden.
+ |
+ \-->extra              builds the 'extra' sprites (i.e. 32bpp replacements for
+      |                 ogfxe_extra in OpenGFX or equivalent in another baseset).
+      |
+      \-->sprites       Contains the 32bpp sprites. Only the (ZOOM_LEVEL_IN_X4) zoom level
+                        is used currently, expected in files ending in '_z0.png'. Corresponding
+			masks are expected in the corresponding '_z0m.png' file.
+
+			The graphic files are stored in a sub-hierarchy inside this sprites
+			folder, and the actual names of the files are irrelevant. However
+			their alphbetical ORDER is important!
+
+			the extra/build_nml.extra shell script explicitly lists each subfolder
+			to be included, and assigns it to a specific block of 'extra' sprites
+			using the corresponding NewGRF API function. Therefore the ordering
+			of the sprites of a particular block inside its subfolder is important.
+
+
+It is perfectly possible to play around yourself by adding or removing new sprires inside the various 
+folders and rerunning:
+
+	make clean ; make
+
+to rebuild a new 32bpp_ez.grf file with your custom set of sprites.
+

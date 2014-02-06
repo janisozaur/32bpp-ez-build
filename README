@@ -1,0 +1,116 @@
+About
+=====
+This project provides a GRF build infrastructure for the 32 bit-per-pixel "extra zoom"
+graphics that were developed for OpenTTD. The .grf file which this project builds is
+suitable for use in OpenTTD versions 1.2.0 and above.
+
+The project builds a single .grf file which contains graphics replacements for the
+base-, arctic-, tropical- and extra-sets, and it can be loaded ontop of any graphics
+baseset (It has been tested and confirmed to work on top of original_windows,
+OpenGFX and zBase)
+
+History
+=======
+Before release 1.2.0 of OpenTTD, an official patch to OpenTTD named "Extra zoom" existed
+which allowed zooming in the game to a level 4x more detailed than either the original
+TTDeluxe game graphics, or the OpenGFX graphics. Furthermore OpenTTD already supported
+32bit-per-pixel graphics, and the combination of these led a group of artists (See also
+the "AUTHORS" file in this project) to produce a set of highly detailed graphics known as
+the "32bpp Extra Zoom" project. Most of the activity of this group can still be traced
+here: http://www.tt-forums.net/viewtopic.php?f=36&t=36474
+
+With release 1.2.0 of OpenTTD, the extra zoom levels from the patch were merged into the
+main development release of OpenTTD, but the graphics syntax of the required 32bpp
+graphics content was changed. Among other things, 32bpp graphics were now expected to 
+be embedded -inside- a ".grf" (so-called "NewGRF") file. As most graphics from the
+"32bpp Extra Zoom" project had been developed for the patch and pre-1.2.0 OpenTTD, which
+loaded graphics using .tar files, this work was in danger of being unusable and lost or
+forgotten with the newer releases of OpenTTD.
+
+The purpose of this project is to incorporate as many as possible of the original
+"32bpp Extra Zoom" graphics work as possible, but ported to the new standards and
+requirements of the latest releases of OpenTTD (1.2.0 and newer, up to at least 1.4.xxx).
+
+Prerequisites
+=============
+This project requires the following components in order to build and run:
+
+NML compiler (nmlc)
+------------------
+Follow the instructions at http://www.tt-wiki.net/wiki/NMLTutorial/Installation to
+install this on your system.
+
+pngcodec
+--------
+You may obtain a version of this program suitable for your system (either a 
+precompiled binary or sources) from: http://www.openttd.org/en/download-pngcodec
+
+OpenTTD
+-------
+Although not strictly required for building, you will of course need OpenTTD, 
+v1.2.0 or later, in order to try out and run the generated .grf file
+
+Follow the instructions at http://wiki.openttd.org/Installation in order
+to obtain and install a suitable version of OpenTTD for your platform.
+
+
+Building
+========
+The build process is supported on any modern unix or unixlike operating system,
+including Linux and Mac OS X. It may also function under cygwin on DOS/Windows
+systems, but this has not been tested.
+
+To build the 32bpp_ez.grf file, follow these instructions:
+
+- unpack the distribution somewhere, e.g. ~/32bzz_ez-0.1
+- inside the distribution directory, run:
+
+	./configure
+
+  You will need the "nmlc" and the "pngcodec" programs (See section "Prerequisites"
+  above) in order to build the grf file succesfully, and the configure scripts
+  checks for them in your execution path (Set via the unix shell environment
+  variable 'PATH'). If either of these executables is not located in the
+  execution path, you can specify them explicitly to the configure script using
+  the command-line arguments "--with-nmlc" and/or "--with-pngcodec" explicitly.
+  Always specify an absolute pah for these executables, as relative paths will
+  not function accross the projects's subdirectories.
+
+  For example if your pngcodec is located at ~/pngcodec-src/pngcodec (e.g. because
+  you have just built it there), and nmlc is installed normally into the execution
+  path on your system, type:
+
+  	./configure --with-pngcodec=$HOME/pngcodec-src/pngcodec
+
+  For a complete overview of all options available to the "configure" script, type:
+
+  	./configure --help
+
+  Although not required, you may build the .grf file in a different folder from where
+  you unpacked the distribution. In order to do so create a build folder, and run the
+  configure script from the distribution from withing the build folder.
+
+  For example:
+
+	mkdir grf-build
+	cd grf-build
+	../32bpp_ez-build-0.1/configure
+
+
+- from the same top-level directory of the distribution (or the build folder if
+  you ran configure from a separate build folder), type:
+
+	make
+
+- The grf build process can take a long time, as it is *not* multithreaded (i.e. on
+  a multiple-CPU system, only one CPU is fully used; on my 4-core Intel Core i7 it
+  takes around ~30 minutes). When it completes you will find a file "32bpp_ez.grf" in
+  the distribution directory (or build folder). This file should be copied to your
+  OpenTTD data folder (See the OpenTTD documentation for the precise location of
+  this folder, as it is system dependent). You can then load it using the "NewGRF"
+  settings when you are inside the OpenTTD UI.
+ 
+Contact me
+==========
+James Bates <james.h.bates@gmail.com>
+

@@ -1,0 +1,93 @@
+@SET_MAKE@
+NMLC = @NMLC@
+PNGCODEC = @PNGCODEC@
+MKDIR_P = @MKDIR_P@
+srcdir = @srcdir@
+PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_VERSION = @PACKAGE_VERSION@
+
+NML := base/32bpp_ez_base.nml arctic/32bpp_ez_arctic.nml tropical/32bpp_ez_tropical.nml extra/32bpp_ez_extra.nml
+
+all:	32bpp_ez.grf
+
+32bpp_ez.grf:	32bpp_ez.nml
+	$(NMLC) --lang-dir=$(srcdir)/lang --grf=$@ $^
+	rm -f $@.cache $@.cacheindex parsetab.py
+
+32bpp_ez.nml:	$(srcdir)/32bpp_ez.pnml $(NML)
+	cat $+ > $@
+
+base/32bpp_ez_base.nml:
+	PREFIX="base/" $(MAKE) -C base nml
+
+arctic/32bpp_ez_arctic.nml:
+	PREFIX="arctic/" $(MAKE) -C arctic nml
+	
+tropical/32bpp_ez_tropical.nml:
+	PREFIX="tropical/" $(MAKE) -C tropical nml
+
+extra/32bpp_ez_extra.nml:
+	PREFIX="extra/" $(MAKE) -C extra nml
+
+dist:
+	$(MKDIR_P) -- $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
+	cp $(srcdir)/COPYING \
+	   $(srcdir)/NEWS \
+	   $(srcdir)/ChangeLog \
+	   $(srcdir)/install-sh \
+	   $(srcdir)/README \
+	   $(srcdir)/INSTALL \
+	   $(srcdir)/AUTHORS \
+	   $(srcdir)/configure \
+	   $(srcdir)/configure.ac \
+	   $(srcdir)/Makefile.in \
+	   $(srcdir)/build_nml.in \
+	   $(srcdir)/32bpp_ez.pnml \
+	   $(srcdir)/empty.pcx \
+	   $(srcdir)/empty.png \
+	   $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
+	cp -r $(srcdir)/lang \
+	   $(srcdir)/doc \
+	   $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
+	$(MKDIR_P) -- $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/base
+	cp $(srcdir)/base/Makefile.in \
+	   $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/base
+	cp -r $(srcdir)/base/sprites \
+	   $(srcdir)/base/lang \
+	   $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/base
+	$(MKDIR_P) -- $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/arctic
+	cp $(srcdir)/arctic/Makefile.in \
+	   $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/arctic
+	cp -r $(srcdir)/arctic/sprites \
+	   $(srcdir)/arctic/lang \
+	   $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/arctic
+	$(MKDIR_P) -- $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/tropical
+	cp $(srcdir)/tropical/Makefile.in \
+	   $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/tropical
+	cp -r $(srcdir)/tropical/sprites \
+	   $(srcdir)/tropical/lang \
+	   $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/tropical
+	$(MKDIR_P) -- $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/extra
+	cp $(srcdir)/extra/Makefile.in \
+	   $(srcdir)/extra/build_nml.extra.in \
+	   $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/extra
+	cp -r $(srcdir)/extra/sprites \
+	   $(srcdir)/extra/lang \
+	   $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)/extra
+	tar cfj $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.bz2 $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
+
+clean:
+	$(MAKE) -C base clean
+	$(MAKE) -C arctic clean
+	$(MAKE) -C tropical clean
+	$(MAKE) -C extra clean
+	rm -f 32bpp_ez.nml 32bpp_ez.grf
+
+distclean: clean
+	$(MAKE) -C base distclean
+	$(MAKE) -C arctic distclean
+	$(MAKE) -C tropical distclean
+	$(MAKE) -C extra distclean
+	rm -f Makefile build_nml config.status config.cache config.log $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.bz2
+	rm -rf $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
+

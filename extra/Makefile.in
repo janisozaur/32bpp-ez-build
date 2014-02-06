@@ -1,0 +1,22 @@
+@SET_MAKE@
+NMLC = @NMLC@
+PNGCODEC = @PNGCODEC@
+srcdir = @srcdir@
+
+all:	32bpp_ez_extra.grf
+
+nml:	32bpp_ez_extra.nml
+
+32bpp_ez_extra.grf:	32bpp_ez_extra.nml
+	${NMLC} --lang-dir=$(srcdir)/lang --grf=$@ $^
+	rm -f $@.cache $@.cacheindex
+
+32bpp_ez_extra.nml:
+	PNGCODEC=$(PNGCODEC) ./build_nml.extra $(srcdir)/sprites $@ 32ZE $(PREFIX)
+
+clean:
+	rm -f 32bpp_ez_extra.nml 32bpp_ez_extra.grf
+
+distclean:
+	rm -f Makefile build_nml.extra
+

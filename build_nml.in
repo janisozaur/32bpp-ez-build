@@ -1,0 +1,74 @@
+#!@BASH@
+
+SRC_DIR="$1"
+DEST_NLM="$2"
+GRFID="$3"
+climate="$4"
+DIR_PREFIX="$5"
+
+AWK="@AWK@"
+SED="@SED@"
+GREP="@GREP@"
+EGREP="@EGREP@"
+
+(
+    for f in `find "$SRC_DIR" -name '*.png' -print|$EGREP -v '.*m\.png'|sort -n`; do
+        echo -n "$f"
+	filename=`basename $f .png`
+	echo -n ' '`echo $filename | "$SED" 's/_.*//'`
+	echo -n ' ZOOM_LEVEL_'`echo $filename | $SED -E 's/^[0-9]+$/NORMAL/;s/^[0-9]+\_z0/IN_4X/;s/^[0-9]+\_z1/IN_2X/'`
+	echo -n ' '`($PNGCODEC l $f | tr ' ' '\n'|$GREP offs|$SED -E 's/._offs=\+?//;s/^$/0/')|tr '\n' ' '`
+	if [ -f $SRC_DIR/"$filename"m.png ]; then
+	    echo -n ' '$SRC_DIR/"$filename"m.png''
+	fi
+	echo ''
+    done
+) | $AWK -- '
+BEGIN {
+	if ("'"$DIR_PREFIX"'" == "") {
+		printf "grf {\n"
+		printf "	grfid: \"'"$GRFID"'\";\n"
+		printf "	name: string(GRF_NAME);\n"
+		printf "	desc: string(GRF_DESC);\n"
+		printf "	version: 1;\n"
+		printf "	min_compatible_version: 0;\n"
+		printf "}\n\n"
+	}
+
+        climate = "'$climate'"
+	
+	if (climate != "BASE") {
+		printf "if (climate == CLIMATE_%s) {\n\n",climate
+	}
+
+	last=""
+}
+
+/.*/ {
+	filename = $1
+	sprite_id = $2
+	zoom_level = $3
+	x_offs = $4
+	y_offs = $5
+	mask_filename = $6
+								
+	if (last != sprite_id) {
+		printf "\nreplace spr_'"$climate"'_%s(%s, \"'"$DIR_PREFIX""$SRC_DIR"'/../../empty.pcx\") {\n",sprite_id,sprite_id
+		printf "	[0, 0, 1, 1, 0, 0]\n"
+		printf "}\n"
+	}
+															       
+        printf "alternative_sprites(spr_'"$climate"'_%s, %s, BIT_DEPTH_32BPP) {\n",sprite_id,zoom_level
+       	printf "	[%s, %s, \"'"$DIR_PREFIX"'%s\", [%s]]\n",x_offs,y_offs,filename,(mask_filename == "") ? "" : "\"'"$DIR_PREFIX"'"  mask_filename "\""
+	printf "}\n"
+
+	last = sprite_id
+}
+
+END {
+
+	if (climate != "BASE") {
+		printf "\n}\n"
+	}
+}
+' > $DEST_NLM
