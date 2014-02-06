@@ -62,7 +62,11 @@ systems, but this has not been tested.
 
 To build the 32bpp_ez.grf file, follow these instructions:
 
-- unpack the distribution somewhere, e.g. ~/32bzz_ez-0.1
+- if you downloaded a release, unpack the distribution somewhere, e.g. ~/32bzz_ez-0.1
+- if you cloned the mercurial repository, e.g. to ~/32bpp-ez-build, you will need to 
+  run "autoreconf -i" inside the distribution directory first, before you can proceed
+  to the next step. This will require gnu autoconf (http://www.gnu.org/software/autoconf/)
+  to be installed on your system.
 - inside the distribution directory, run:
 
 	./configure
