@@ -9,7 +9,7 @@ all:	32bpp_ez_base.grf
 nml:	32bpp_ez_base.nml
 
 32bpp_ez_base.grf:	32bpp_ez_base.nml
-	$(NMLC) --lang-dir=$(srcdir) --grf=$@ $^
+	$(NMLC) --lang-dir=$(srcdir)/lang --grf=$@ $^
 	rm -f $@.cache $@.cacheindex
 
 32bpp_ez_base.nml:
